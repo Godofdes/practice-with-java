@@ -88,5 +88,22 @@ ElemrntType TopAndPop(Stack S)
 }
 int main()
 {
-	
+	int i = 0;
+	Stack p;
+	Stack *s;
+	s=&p;
+	init(s);
+	for(i=0;i<10;i++)
+	{
+		Push(i,s);
+	}
+		printf("%d\n",Top(s));
+	for(i=0;i<10;i++)
+	{
+		Pop(s);
+	}
+	Top(s);
+	Push(100,s);
+	Destroy(s);
+	Top(s);
 } 
