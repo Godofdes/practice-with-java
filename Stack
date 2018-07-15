@@ -1,156 +1,78 @@
-#include<iostream>
-#include<malloc.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct Node;
-typedef int ElementType;
-typedef struct Node *PtrToNode;
-typedef PtrToNode Stack;
+#define	SIZE	10	
 
-int IsEmpty(Stack S);
-Stack CreateStack(void);
-void DisposeStack(Stack S);
-void MakeEmpty(Stack S);
-void Push(ElementType X, Stack S);
-ElementType Top(Stack S);
-void Pop(Stack S);
-
-struct Node
-{
-	ElementType Element;
-	PtrToNode Next;
+struct stack{
+	int sta[SIZE];
+	int top;
 };
 
-int IsEmpty(Stack S)
+void init_stack(struct stack* s)
 {
-	return S->Next == NULL; 
+	memset(s->sta, 0, sizeof(s->sta));
+	s->top = -1;
 }
 
-
-Stack CreateStack(void)
+int Push(struct stack* s, int data)
 {
-	Stack S;
-	
-	S = (Stack)malloc(sizeof(struct Node));
-	if( S == NULL )
-		printf("Out of space!!!");
-	S->Next == NULL;
-	MakeEmpty(S);
-	return S;
+	if(s->top == SIZE-1){
+		printf("the stack is full. \n");
+		return 1;
+	}	
+
+	(s->top)++;
+	s->sta[s->top] = data;
+	return 0;
 }
 
-void MakeEmpty(Stack S)
+int Pop(struct stack* s)
 {
-	if(S == NULL)
-		printf("Must use CreateStack first");
-	else
-		while(!IsEmpty(S))
-			Pop(S);
-}
-
-void Push(ElementType X, Stack S)
-{
-	PtrToNode TmpCell;
-	
-	TmpCell = (PtrToNode)malloc(sizeof(struct Node));
-	if(TmpCell == NULL)
-		printf("Out of space!!!");
-	else
-	{
-		TmpCell->Element = X;
-		TmpCell->Next = S->Next;
-		S->Next = TmpCell;
+	int tmp;
+	if(s->top < 0 ){
+		printf("the stack is empty. \n");
+		return -1;
+	} else {
+		tmp = (s->sta)[s->top]; 
+		(s->top)--;
+		return tmp;	
 	}
 }
 
-ElementType Top(Stack S)
+void destory(struct stack *s)
 {
-	if (!IsEmpty(S))
-		return S->Next->Element;
-		printf("Empty stack");
-		return 0;
+	s->top = -1;
+	memset(s->sta, 0, sizeof(s->sta));
 }
 
-void Pop(Stack(S))
+int main()
 {
-	PtrToNode FirstCell;
-	
-	if((IsEmpty(S)))
-		printf("Empty stack");
-	else
-	{
-		FirstCell = S->Next;
-		S->Next = S->Next->Next;
-		free(FirstCell);
+	struct stack S;
+	init_stack(&S);
+	int i , ret ;
+
+	for(i=0; i<SIZE; i++){
+		ret = Push(&S, i+10);
+		if(ret > 0){
+			printf("Push error. \n");	
+			exit(1);
+		}
 	}
+
+	for(i=0; i<SIZE; i++){
+		ret = Pop(&S);
+		if(ret < 0){
+			printf("Pop error. \n");	
+			exit(1);
+		}
+		printf("%d\t", ret);
+	}
+
+	printf("\n");
+
+	destory(&S);
+
+	return 0;
 }
 
-int main(int argc, const char * argv[])
-{
-    Stack S = CreateStack();
-    int i = 0;
-    char tmp;
-    int flag = 0;
-    char A[] = {'(','b','c',')','[','{','a','(',')','c','}',']'};
-    for (i = 0; i < sizeof(A)/sizeof(char); i++)
-    {
-        if (A[i] == '(' || A[i] == '[' || A[i] == '{')
-        {
-            Push(A[i], S);
-            continue;
-        }
-        else
-        {
-            if (A[i] == ')' || A[i] == ']' || A[i] == '}')
-            {
-                tmp = Top(S);
-                switch (A[i])
-                {
-                    case ')':
-                        if (tmp == '(')
-                        {
-                            flag = 1;
-                        }
-                        break;
-                    case ']':
-                        if (tmp == '[')
-                        {
-                            flag = 1;
-                        }
-                        break;
-                    case '}':
-                        if (tmp == '{')
-                        {
-                            flag = 1;
-                        }
-                        break;
-                        
-                    default:
-                        break;
-                }
-                if (flag != 1)
-                {
-                    printf("the bracket doesn't match! %c-%d\n",A[i],i);
-                    return 1;
-                }
-                else
-                {
-                    Pop(S);
-                    flag = 0;
-                }
-            }
-            else
-            {
-                continue;
-            }
-        }
-    }
-    if (!IsEmpty(S))
-    {
-        printf("there are already some barackets not matched!\n");
-        return 1;
-    }else{
-        printf("the bracket is matched\n");
-    }
-    return 0;
-}
