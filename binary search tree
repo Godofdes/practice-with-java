@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int ElementType;
+
+typedef struct Node{
+	ElementType data;
+	struct Node *lchild, *rchild;
+}Node, *Tree;
+
+
+int BSTInsert( Tree *t, ElementType element )
+{
+	if( NULL == *t ) {
+		(*t) = (Tree)malloc(sizeof(Node));
+		(*t)->data = element;
+		(*t)->lchild = (*t)->rchild = NULL;
+		return 1;
+	}
+
+	if( element == (*t)->data )
+		return 0;
+
+	if( element < (*t)->data )
+		return BSTInsert( &(*t)->lchild, element );
+
+	return BSTInsert( &(*t)->rchild, element );
+}
+
+
+void CreateBST( Tree *t, ElementType *a, int n )
+{
+	(*t) = NULL;
+	for( int i=0; i<n; i++ )
+		BSTInsert( t, a[i] );
+}
+
+
+void PrintBST( Tree t )
+{
+	if( t ) {
+		PrintBST( t->lchild );
+		printf("%d ", t->data);
+		PrintBST( t->rchild );
+	}
+}
+
+int main()
+{
+	int n;
+	int *a;
+	Tree t;
+
+	printf("请输入二叉查找树的结点数:\n");
+	scanf("%d", &n);
+
+	a = (int *)malloc(sizeof(int)*n);
+	printf("请输入而查找树的结点:\n");
+	for( int i=0; i<n; i++ )
+		scanf("%d", &a[i]);
+
+	CreateBST( &t, a, n );
+	printf("该BST的中序遍历结果为:\n");
+	PrintBST( t );
+	printf("\n");
+	
+	return 0;
+
+}
